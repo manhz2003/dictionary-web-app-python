@@ -16,8 +16,8 @@ app.register_blueprint(login_controller)
 # Kết nối đến cơ sở dữ liệu
 db.init_app(app)
 
-# Bật CORS cho tất cả các đường dẫn bắt đầu bằng '/api'
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:2024"}})
+# Cấu hình CORS
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:2024", "supports_credentials": True}})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
