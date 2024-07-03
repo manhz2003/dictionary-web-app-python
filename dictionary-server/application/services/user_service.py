@@ -97,3 +97,23 @@ class UserService:
     @staticmethod
     def get_user_roles(user):
         return [{'nameRole': role.name_role, 'type': role.type} for role in user.roles] if user.roles else []
+
+    @staticmethod
+    def update_profile(data):
+        user_id = data.get('userId')
+        user = User.query.get(user_id)
+
+        if not user:
+            return None, 'User not found'
+
+        # Cập nhật thông tin người dùng từ dữ liệu nhận được
+        user.fullname = data.get('fullname', user.fullname)
+        user.email = data.get('email', user.email)
+        user.phone_number = data.get('phoneNumber', user.phone_number)
+        user.address = data.get('address', user.address)
+        user.avatar = data.get('avatar', user.avatar)
+
+        # Lưu thay đổi vào cơ sở dữ liệu
+        db.session.commit()
+
+        return user, None
