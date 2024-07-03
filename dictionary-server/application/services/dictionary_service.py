@@ -2,7 +2,9 @@ from application.models.dictionary import Dictionary
 from application.models.example_dictionary import Example
 from application.models.category import Category
 
+
 class DictionaryService:
+
     def get_dictionaries_with_examples(self):
         dictionaries = Dictionary.query.all()
         dictionaries_with_examples = []
