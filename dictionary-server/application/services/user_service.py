@@ -135,8 +135,12 @@ class UserService:
 
         return user, None
 
-
     @staticmethod
     def get_profile(user_id):
         user = User.query.get(user_id)
         return user
+
+    @staticmethod
+    def get_total_users():
+        total_users = User.query.count()
+        return total_users

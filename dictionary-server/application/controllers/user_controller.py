@@ -88,3 +88,9 @@ def get_profile(user_id):
         'avatar': user.avatar,
         'email': user.email
     }), 200
+
+
+@user_controller.route('/total', methods=['GET'])
+def get_total_users():
+    total_users = UserService.get_total_users()
+    return jsonify(total_users), 200
