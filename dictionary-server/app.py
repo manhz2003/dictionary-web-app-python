@@ -1,10 +1,9 @@
 # app.py
-
-from flask import Flask
 from flask_cors import CORS
+from flask import Flask
 from application import db
 from application.controllers.role_controller import role_controller
-from application.controllers.user_controller import user_controller, login_controller, user_register_controller
+from application.controllers.user_controller import user_controller
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -12,8 +11,6 @@ app.config.from_pyfile('config.py')
 # Đăng ký Blueprint của role_controller
 app.register_blueprint(role_controller)
 app.register_blueprint(user_controller)
-app.register_blueprint(login_controller)
-app.register_blueprint(user_register_controller)
 
 # Kết nối đến cơ sở dữ liệu
 db.init_app(app)
