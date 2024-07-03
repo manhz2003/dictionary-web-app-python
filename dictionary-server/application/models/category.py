@@ -1,4 +1,3 @@
-# application/models/category.py
 from application import db
 
 class Category(db.Model):
@@ -11,7 +10,15 @@ class Category(db.Model):
 
     dictionaries = db.relationship('Dictionary', backref='category', lazy=True, cascade='all, delete-orphan')
 
-    def __init__(self, describe, name_category, thumbnail):
-        self.describe = describe
+    def __init__(self, name_category, thumbnail, describe=None):
         self.name_category = name_category
         self.thumbnail = thumbnail
+        self.describe = describe
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nameCategory': self.name_category,
+            'thumbnail': self.thumbnail,
+            'describe': self.describe
+        }

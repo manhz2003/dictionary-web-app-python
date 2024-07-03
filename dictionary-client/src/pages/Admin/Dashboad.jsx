@@ -275,7 +275,7 @@ const DashBoard = () => {
     {
       title: "Role",
       key: "role",
-      render: (text, record) => record.role.join(", "),
+      render: (text, record) => record.roles.join(", "),
     },
     {
       title: "Action",
