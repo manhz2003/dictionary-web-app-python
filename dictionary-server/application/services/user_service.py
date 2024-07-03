@@ -117,3 +117,8 @@ class UserService:
         db.session.commit()
 
         return user, None
+
+    @staticmethod
+    def get_profile(user_id):
+        user = User.query.get(user_id)
+        return user
