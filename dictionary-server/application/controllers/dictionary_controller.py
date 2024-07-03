@@ -78,3 +78,17 @@ def search_dictionary_by_category_id(category_id):
         return jsonify({'error': 'No dictionaries found for the category'}), 404
 
     return jsonify(dictionaries), 200
+
+
+@dictionary_bp.route('/search', methods=['GET'])
+def search_dictionary_vietnamese():
+    keyword = request.args.get('keyword')
+    page = int(request.args.get('page', 0))
+    size = int(request.args.get('size', 10))
+
+    dictionaries = dictionary_service.search_dictionaries_vietnamese(keyword, page, size)
+
+    if not dictionaries:
+        return jsonify({'error': 'No dictionaries found for the keyword'}), 404
+
+    return jsonify(dictionaries), 200
