@@ -134,3 +134,11 @@ class DictionaryService:
             print(f"Error deleting dictionary: {repr(e)}")
             db.session.rollback()
             return None
+
+    def get_total_vietnamese_count(self):
+        total_vietnamese_count = Dictionary.query.count()
+        return total_vietnamese_count
+
+    def get_total_explanations_count(self):
+        total_explanations_count = Dictionary.query.filter(Dictionary.explanation.isnot(None)).count()
+        return total_explanations_count

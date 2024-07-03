@@ -47,3 +47,15 @@ def delete_dictionary(dictionary_id):
         return jsonify({'message': f'Dictionary with ID {dictionary_id} and its examples deleted'}), 200
     else:
         return jsonify({'error': 'Dictionary not found'}), 404
+
+
+@dictionary_bp.route('/total-counts', methods=['GET'])
+def get_total_dictionary_and_explanation_counts():
+    total_vietnamese_count = dictionary_service.get_total_vietnamese_count()
+    total_explanations_count = dictionary_service.get_total_explanations_count()
+
+    return jsonify({
+        "totalVietnameseCount": total_vietnamese_count,
+        "totalExplanationsCount": total_explanations_count
+    }), 200
+
