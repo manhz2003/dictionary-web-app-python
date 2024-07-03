@@ -94,3 +94,39 @@ def get_profile(user_id):
 def get_total_users():
     total_users = UserService.get_total_users()
     return jsonify(total_users), 200
+
+
+@user_controller.route('/all', methods=['GET'])
+def get_all_users():
+    all_users = UserService.get_all_users()
+    return jsonify(all_users), 200
+
+
+@user_controller.route('/delete/<int:user_id>', methods=['DELETE'])
+def delete_user_by_id(user_id):
+    success = UserService.delete_user_by_id(user_id)
+    if success:
+        return jsonify({'message': 'User deleted successfully'}), 200
+    else:
+        return jsonify({'error': 'User not found'}), 404
+
+
+@user_controller.route('/update-user', methods=['PUT'])
+def update_user_by_id():
+    data = request.json
+    updated_user = UserService.update_user_by_id(data)
+    if updated_user:
+        return jsonify(updated_user.serialize()), 200
+    else:
+        return jsonify({'error': 'User not found'}), 404
+
+
+@user_controller.route('/create-user', methods=['POST'])
+def create_user():
+    data = request.json
+    new_user, error = UserService.create_user(data)
+
+    if error:
+        return jsonify({'error': error}), 400
+
+    return jsonify(new_user.serialize()), 201

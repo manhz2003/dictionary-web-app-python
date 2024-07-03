@@ -144,3 +144,98 @@ class UserService:
     def get_total_users():
         total_users = User.query.count()
         return total_users
+
+    @staticmethod
+    def get_all_users():
+        users = User.query.all()
+        result = []
+        for user in users:
+            user_data = {
+                'id': user.id,
+                'fullname': user.fullname,
+                'email': user.email,
+                'phoneNumber': user.phone_number,
+                'address': user.address,
+                'avatar': user.avatar,
+                'roles': [role.name_role for role in user.roles]
+            }
+            result.append(user_data)
+        return result
+
+    @staticmethod
+    def delete_user_by_id(user_id):
+        user = User.query.get(user_id)
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def update_user_by_id(data):
+        user_id = data.get('userId')
+        user = User.query.get(user_id)
+
+        if not user:
+            return None
+
+        # Update thông tin user
+        user.fullname = data.get('fullname', user.fullname)
+        user.email = data.get('email', user.email)
+        user.phone_number = data.get('phoneNumber', user.phone_number)
+        user.address = data.get('address', user.address)
+
+        # Lấy và cập nhật vai trò mới cho user
+        role_id = data.get('roleId')
+        if role_id:
+            role = Role.query.get(role_id)
+            if role:
+                # Xóa hết các vai trò cũ của user trong bảng user_roles
+                UserRoles.query.filter_by(user_id=user.id).delete()
+
+                # Thêm vai trò mới vào bảng user_roles
+                user_role = UserRoles(role_id=role.id, user_id=user.id)
+                db.session.add(user_role)
+
+        db.session.commit()
+        return user
+
+    @staticmethod
+    def create_user(data):
+        # Kiểm tra xem email đã tồn tại chưa
+        existing_user = User.query.filter_by(email=data['email']).first()
+        if existing_user:
+            return None, 'Email already exists'
+
+        # Kiểm tra xem role đã tồn tại chưa
+        role_id = data.get('roleId')
+        role = Role.query.get(role_id)
+        if not role:
+            return None, 'Role not found'
+
+        # Tạo user mới với các giá trị mặc định hoặc None cho các trường không bắt buộc
+        new_user = User(
+            address=data.get('address', ''),
+            email=data['email'],
+            fullname=data['fullname'],
+            avatar=data.get('avatar', None),  # Xử lý trường hợp avatar có thể là None
+            password=data.get('password', ''),  # Xử lý trường hợp password có thể là None
+            refresh_token=data.get('refreshToken', None),  # Xử lý trường hợp refreshToken có thể là None
+            phone_number=data.get('phoneNumber', ''),
+        )
+
+        # Nếu password không tồn tại, không thực hiện mã hóa
+        if new_user.password:
+            new_user.set_password(new_user.password)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        # Gán role cho user mới trong bảng trung gian user_roles
+        user_role_mapping = UserRoles(role_id=role.id, user_id=new_user.id)
+        db.session.add(user_role_mapping)
+        db.session.commit()
+
+        return new_user, None
+
