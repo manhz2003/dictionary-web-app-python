@@ -13,10 +13,7 @@ def register_admin():
     return jsonify(new_user.serialize()), 201
 
 
-user_register_controller = Blueprint('user_register_controller', __name__, url_prefix='/api/users')
-
-
-@user_register_controller.route('/register/user', methods=['POST'])
+@user_controller.route('/register/user', methods=['POST'])
 def register_user():
     data = request.json
     new_user, error = UserService.register_user(data)
@@ -27,10 +24,7 @@ def register_user():
     return jsonify(new_user.serialize()), 201
 
 
-login_controller = Blueprint('login_controller', __name__, url_prefix='/api/users')
-
-
-@login_controller.route('/login', methods=['POST'])
+@user_controller.route('/login', methods=['POST'])
 def login():
     data = request.json
     user = UserService.login(data)
@@ -48,3 +42,21 @@ def login():
         'email': user['email'],
         'status': user['status']
     }), 200
+
+
+@user_controller.route('/change-password', methods=['PUT'])
+def change_password():
+    data = request.json
+    email = data.get('email')
+    old_password = data.get('oldPassword')
+    new_password = data.get('newPassword')
+
+    user, error = UserService.change_password(email, old_password, new_password)
+
+    if error:
+        return jsonify({'error': error}), 400
+
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    return jsonify({'message': 'Password updated successfully'}), 200
