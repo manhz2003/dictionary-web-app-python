@@ -38,3 +38,12 @@ def update_dictionary():
 
     except Exception as e:
         return jsonify({"message": "Internal Server Error", "error": str(e)}), 500
+
+
+@dictionary_bp.route('/<int:dictionary_id>', methods=['DELETE'])
+def delete_dictionary(dictionary_id):
+    deleted_dictionary = dictionary_service.delete_dictionary(dictionary_id)
+    if deleted_dictionary:
+        return jsonify({'message': f'Dictionary with ID {dictionary_id} and its examples deleted'}), 200
+    else:
+        return jsonify({'error': 'Dictionary not found'}), 404

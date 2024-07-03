@@ -189,7 +189,7 @@ const ManageVocabulary = () => {
   const handleDelete = async (record) => {
     try {
       const response = await apiDeleteDictionary(record.id);
-      if (response.status === 204) {
+      if (response.status === 200) {
         toast.success("Xóa từ điển thành công");
         reloadDictionary();
       }

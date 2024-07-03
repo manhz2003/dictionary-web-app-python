@@ -113,3 +113,24 @@ class DictionaryService:
             print(f"Error updating dictionary: {repr(e)}")
             db.session.rollback()
             return None, str(e)
+
+    def delete_dictionary(self, dictionary_id):
+        try:
+            # Tìm từ điển cần xóa
+            dictionary_to_delete = Dictionary.query.get(dictionary_id)
+
+            if not dictionary_to_delete:
+                return None
+
+            # Xóa các ví dụ của từ điển
+            Example.query.filter_by(dictionary_id=dictionary_id).delete()
+
+            # Xóa từ điển
+            db.session.delete(dictionary_to_delete)
+            db.session.commit()
+
+            return dictionary_to_delete
+        except Exception as e:
+            print(f"Error deleting dictionary: {repr(e)}")
+            db.session.rollback()
+            return None
