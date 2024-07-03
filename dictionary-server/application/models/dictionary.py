@@ -1,4 +1,7 @@
+# application/models/dictionary.py
+
 from application import db
+from application.models.example_dictionary import Example  # Make sure to import Example model
 
 class Dictionary(db.Model):
     __tablename__ = 'dictionaries'
@@ -21,3 +24,15 @@ class Dictionary(db.Model):
         self.word_type = word_type
         self.thumbnail = thumbnail
         self.category_id = category_id
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "vietnamese": self.vietnamese,
+            "english": self.english,
+            "phoneticTranscription": self.phonetic_transcription,
+            "explanation": self.explanation,
+            "wordType": self.word_type,
+            "thumbnail": self.thumbnail,
+            "category_id": self.category_id
+        }

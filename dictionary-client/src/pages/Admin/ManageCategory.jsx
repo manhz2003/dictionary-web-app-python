@@ -55,7 +55,7 @@ const ManageCategory = () => {
   const handleDelete = async (record) => {
     try {
       const response = await apiDeleteCategory(record.id);
-      if (response.status === 204) {
+      if (response.status === 200) {
         toast.success("Xóa danh mục thành công");
         reloadCategory();
       } else {
@@ -82,7 +82,7 @@ const ManageCategory = () => {
   // Xử lý sửa category
   const handleEdit = (record) => {
     setNameCategory(record.nameCategory);
-    setDescription(record.description);
+    setDescription(record.describe);
     setDefaultImage(record.thumbnail);
     setThumbnail(record.thumbnail);
     setIdCategory(record.id);
@@ -172,7 +172,7 @@ const ManageCategory = () => {
       } else {
         await apiCreateCategory(categoryCreate)
           .then((response) => {
-            if (response.status === 200) {
+            if (response.status === 201) {
               toast.success("Thêm mới danh mục thành công");
             }
           })
@@ -210,7 +210,7 @@ const ManageCategory = () => {
     },
     {
       title: "Mô tả",
-      key: "description",
+      key: "describe",
       sort: true,
     },
     {

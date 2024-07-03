@@ -105,8 +105,6 @@ const ManageVocabulary = () => {
     ? dataDictionary?.filter((word) => word.category.id === selectedCategory.id)
     : dataDictionary || [];
 
-  console.log(filteredDataDictionary);
-
   // xử lý xuất file excel
   async function exportToExcel(dataSelect) {
     let workbook = new ExcelJS.Workbook();
@@ -244,7 +242,7 @@ const ManageVocabulary = () => {
     if (dataImport) {
       apiCreateDictionary(dataImport)
         .then((response) => {
-          if (response.status === 200) {
+          if (response.status === 201) {
             toast.success("Import thành công");
             setShowModal(false);
             setFileName(null);
