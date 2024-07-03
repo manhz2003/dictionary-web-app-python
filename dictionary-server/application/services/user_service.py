@@ -99,6 +99,23 @@ class UserService:
         return [{'nameRole': role.name_role, 'type': role.type} for role in user.roles] if user.roles else []
 
     @staticmethod
+    def change_password(email, old_password, new_password):
+        # Tìm user dựa trên email
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return None, 'User not found'
+
+        # Kiểm tra mật khẩu cũ
+        if not user.check_password(old_password):
+            return None, 'Incorrect old password'
+
+        # Cập nhật mật khẩu mới
+        user.set_password(new_password)
+        db.session.commit()
+
+        return user, None
+
+    @staticmethod
     def update_profile(data):
         user_id = data.get('userId')
         user = User.query.get(user_id)
@@ -117,6 +134,7 @@ class UserService:
         db.session.commit()
 
         return user, None
+
 
     @staticmethod
     def get_profile(user_id):

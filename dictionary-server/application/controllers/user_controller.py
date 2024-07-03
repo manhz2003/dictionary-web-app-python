@@ -1,116 +1,90 @@
-# application/services/user_service.py
-from application import db
-from application.models.user import User
-from application.models.role import Role
-from application.models.user_roles import UserRoles
+# application/controllers/user_controller.py
 
-class UserService:
-    @staticmethod
-    def register_admin(data):
-        # Kiểm tra xem role admin đã tồn tại chưa
-        admin_role = Role.query.filter_by(name_role='Admin').first()
-        if not admin_role:
-            admin_role = Role(name_role='Admin')
-            db.session.add(admin_role)
-            db.session.commit()
+from flask import Blueprint, jsonify, request
+from application.services.user_service import UserService
 
-        new_user = User(
-            address=data['address'],
-            avatar=data['avatar'],
-            email=data['email'],
-            fullname=data['fullname'],
-            password=data['password'],
-            phone_number=data['phoneNumber'],
-            refresh_token=data['refreshToken']
-        )
-        db.session.add(new_user)
-        db.session.commit()
+user_controller = Blueprint('user_controller', __name__, url_prefix='/api/users')
 
-        user_role = UserRoles(role_id=admin_role.id, user_id=new_user.id)
-        db.session.add(user_role)
-        db.session.commit()
 
-        return new_user
+@user_controller.route('/register/admin', methods=['POST'])
+def register_admin():
+    data = request.json
+    new_user = UserService.register_admin(data)
+    return jsonify(new_user.serialize()), 201
 
-    @staticmethod
-    def register_user(data):
-        # Kiểm tra xem email đã tồn tại chưa
-        existing_user = User.query.filter_by(email=data['email']).first()
-        if existing_user:
-            return None, 'Email already exists'
 
-        # Kiểm tra xem role user đã tồn tại chưa
-        user_role = Role.query.filter_by(name_role='User').first()
-        if not user_role:
-            # Nếu chưa tồn tại, tạo role user mới
-            user_role = Role(name_role='User', type=2)
-            db.session.add(user_role)
-            db.session.commit()
+@user_controller.route('/register/user', methods=['POST'])
+def register_user():
+    data = request.json
+    new_user, error = UserService.register_user(data)
 
-        # Tạo user mới với vai trò user và mã hóa mật khẩu
-        new_user = User(
-            address=data.get('address', ''),
-            avatar=data.get('avatar', ''),
-            email=data['email'],
-            fullname=data['fullname'],
-            password=data['password'],
-            phone_number=data.get('phoneNumber', ''),
-            refresh_token=data.get('refreshToken', '')
-        )
-        db.session.add(new_user)
-        db.session.commit()
+    if error:
+        return jsonify({'error': error}), 400
 
-        # Gán role user cho user mới trong bảng trung gian user_roles
-        user_role_mapping = UserRoles(role_id=user_role.id, user_id=new_user.id)
-        db.session.add(user_role_mapping)
-        db.session.commit()
+    return jsonify(new_user.serialize()), 201
 
-        return new_user, None
 
-    @staticmethod
-    def login(data):
-        email = data.get('email')
-        password = data.get('password')
+@user_controller.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    user = UserService.login(data)
 
-        user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'error': 'Invalid email or password'}), 401
 
-        if not user or not user.check_password(password):
-            return None
+    return jsonify({
+        'phoneNumber': user['phoneNumber'],
+        'address': user['address'],
+        'roles': user['roles'],
+        'id': user['id'],
+        'fullname': user['fullname'],
+        'avatar': user['avatar'],
+        'email': user['email'],
+        'status': user['status']
+    }), 200
 
-        roles = UserService.get_user_roles(user)
 
-        return {
-            'id': user.id,
-            'fullname': user.fullname,
-            'email': user.email,
-            'phoneNumber': user.phone_number,
-            'address': user.address,
-            'password': user.password,
-            'avatar': user.avatar,
-            'refreshToken': user.refresh_token,
-            'status': user.status,
-            'roles': roles,
-            'basicUserInfo': user.basic_info(),
-            'avatarUrl': ''
-        }
+@user_controller.route('/change-password', methods=['PUT'])
+def change_password():
+    data = request.json
+    email = data.get('email')
+    old_password = data.get('oldPassword')
+    new_password = data.get('newPassword')
 
-        @staticmethod
-        def get_user_roles(user):
-            return [{'nameRole': role.name_role, 'type': role.type} for role in user.roles] if user.roles else []
+    user, error = UserService.change_password(email, old_password, new_password)
 
-        @staticmethod
-        def change_password(email, old_password, new_password):
-            # Tìm user dựa trên email
-            user = User.query.filter_by(email=email).first()
-            if not user:
-                return None, 'User not found'
+    if error:
+        return jsonify({'error': error}), 400
 
-            # Kiểm tra mật khẩu cũ
-            if not user.check_password(old_password):
-                return None, 'Incorrect old password'
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
 
-            # Cập nhật mật khẩu mới
-            user.set_password(new_password)
-            db.session.commit()
+    return jsonify({'message': 'Password updated successfully'}), 200
 
-            return user, None
+
+@user_controller.route('/update-profile', methods=['PUT'])
+def update_profile():
+    data = request.json
+    updated_user, error = UserService.update_profile(data)
+
+    if error:
+        return jsonify({'error': error}), 400
+
+    return jsonify(updated_user.serialize()), 200
+
+
+@user_controller.route('/get-profile/<int:user_id>', methods=['GET'])
+def get_profile(user_id):
+    user = UserService.get_profile(user_id)
+
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    return jsonify({
+        'phoneNumber': user.phone_number,
+        'address': user.address,
+        'id': user.id,
+        'fullname': user.fullname,
+        'avatar': user.avatar,
+        'email': user.email
+    }), 200
