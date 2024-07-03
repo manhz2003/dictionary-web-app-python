@@ -73,3 +73,43 @@ class DictionaryService:
             print(f"Error creating dictionaries: {repr(e)}")
             db.session.rollback()
             return None
+
+    def update_dictionary(self, data):
+        try:
+            print("Updating dictionary with data:")
+            print(data)  # Log data để xem nó nhận được những gì từ request
+
+            # Lấy id từ phần tử đầu tiên trong danh sách data
+            dictionary_id = data[0]['id']
+            dictionary_to_update = Dictionary.query.get(dictionary_id)
+
+            if not dictionary_to_update:
+                return None, "Dictionary not found"
+
+            dictionary_to_update.vietnamese = data[0]['vietnamese']
+            dictionary_to_update.english = data[0]['english']
+            dictionary_to_update.phonetic_transcription = data[0]['phoneticTranscription']
+            dictionary_to_update.explanation = data[0]['explain']
+            dictionary_to_update.word_type = data[0]['wordType']
+            dictionary_to_update.thumbnail = data[0].get('thumbnail')
+            dictionary_to_update.category_id = data[0]['category']
+
+            # Xóa các ví dụ hiện có và thêm các ví dụ mới
+            dictionary_to_update.examples.clear()
+
+            if 'englishExample' in data[0] and 'vietnameseExample' in data[0]:
+                for eng_example, vie_example in zip(data[0]['englishExample'], data[0]['vietnameseExample']):
+                    new_example = Example(
+                        example=eng_example,
+                        example_translation=vie_example,
+                        dictionary_id=dictionary_id
+                    )
+                    dictionary_to_update.examples.append(new_example)
+
+            db.session.commit()
+
+            return dictionary_to_update.serialize(), None
+        except Exception as e:
+            print(f"Error updating dictionary: {repr(e)}")
+            db.session.rollback()
+            return None, str(e)

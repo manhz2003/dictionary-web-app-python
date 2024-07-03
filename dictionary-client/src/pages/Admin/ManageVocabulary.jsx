@@ -353,8 +353,6 @@ const ManageVocabulary = () => {
       },
     ];
 
-    console.log(vocabularyCreate);
-
     try {
       if (isEditMode) {
         await apiUpdateDictionary(vocabularyEdit)
@@ -369,7 +367,7 @@ const ManageVocabulary = () => {
       } else {
         await apiCreateDictionary(vocabularyCreate)
           .then((response) => {
-            if (response.status === 200) {
+            if (response.status === 201) {
               toast.success("Thêm mới từ điển thành công");
             }
           })
