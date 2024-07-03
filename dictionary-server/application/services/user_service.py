@@ -10,12 +10,10 @@ class UserService:
         # Kiểm tra xem role admin đã tồn tại chưa
         admin_role = Role.query.filter_by(name_role='Admin').first()
         if not admin_role:
-            # Nếu chưa tồn tại, tạo role admin mới
             admin_role = Role(name_role='Admin')
             db.session.add(admin_role)
             db.session.commit()
 
-        # Tạo user mới với vai trò admin và mã hóa mật khẩu
         new_user = User(
             address=data['address'],
             avatar=data['avatar'],
@@ -28,13 +26,46 @@ class UserService:
         db.session.add(new_user)
         db.session.commit()
 
-        # Gán role admin cho user mới trong bảng trung gian user_roles
         user_role = UserRoles(role_id=admin_role.id, user_id=new_user.id)
         db.session.add(user_role)
         db.session.commit()
 
         return new_user
 
+    @staticmethod
+    def register_user(data):
+        # Kiểm tra xem email đã tồn tại chưa
+        existing_user = User.query.filter_by(email=data['email']).first()
+        if existing_user:
+            return None, 'Email already exists'
+
+        # Kiểm tra xem role user đã tồn tại chưa
+        user_role = Role.query.filter_by(name_role='User').first()
+        if not user_role:
+            # Nếu chưa tồn tại, tạo role user mới
+            user_role = Role(name_role='User', type=2)
+            db.session.add(user_role)
+            db.session.commit()
+
+        # Tạo user mới với vai trò user và mã hóa mật khẩu
+        new_user = User(
+            address=data.get('address', ''),
+            avatar=data.get('avatar', ''),
+            email=data['email'],
+            fullname=data['fullname'],
+            password=data['password'],
+            phone_number=data.get('phoneNumber', ''),
+            refresh_token=data.get('refreshToken', '')
+        )
+        db.session.add(new_user)
+        db.session.commit()
+
+        # Gán role user cho user mới trong bảng trung gian user_roles
+        user_role_mapping = UserRoles(role_id=user_role.id, user_id=new_user.id)
+        db.session.add(user_role_mapping)
+        db.session.commit()
+
+        return new_user, None
 
     @staticmethod
     def login(data):
@@ -46,10 +77,8 @@ class UserService:
         if not user or not user.check_password(password):
             return None
 
-        # Lấy danh sách các vai trò của người dùng
         roles = UserService.get_user_roles(user)
 
-        # Trả về một từ điển chứa thông tin của người dùng kèm vai trò
         return {
             'id': user.id,
             'fullname': user.fullname,
@@ -58,9 +87,9 @@ class UserService:
             'address': user.address,
             'password': user.password,
             'avatar': user.avatar,
-            'refreshToken': user.refresh_token,
+'refreshToken': user.refresh_token,
             'status': user.status,
-            'roles': roles,  # Thêm thông tin về vai trò của người dùng
+            'roles': roles,
             'basicUserInfo': user.basic_info(),
             'avatarUrl': ''
         }
