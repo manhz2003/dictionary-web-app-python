@@ -142,3 +142,63 @@ class DictionaryService:
     def get_total_explanations_count(self):
         total_explanations_count = Dictionary.query.filter(Dictionary.explanation.isnot(None)).count()
         return total_explanations_count
+
+    def get_dictionary_detail_by_id(self, dictionary_id):
+        dictionary = Dictionary.query.get(dictionary_id)
+
+        if not dictionary:
+            return None
+
+        examples = Example.query.filter_by(dictionary_id=dictionary_id).all()
+        category = Category.query.get(dictionary.category_id)
+
+        dictionary_detail = {
+            "id": dictionary.id,
+            "vietnamese": dictionary.vietnamese,
+            "english": dictionary.english,
+            "phoneticTranscription": dictionary.phonetic_transcription,
+            "explanation": dictionary.explanation,
+            "wordType": dictionary.word_type,
+            "thumbnail": dictionary.thumbnail,
+            "category": {
+                "id": category.id,
+                "nameCategory": category.name_category,
+                "thumbnail": category.thumbnail,
+                "description": category.describe
+            },
+            "englishExample": [example.example for example in examples],
+            "vietnameseExample": [example.example_translation for example in examples]
+        }
+
+        return dictionary_detail
+
+    def get_dictionaries_by_category_id(self, category_id):
+        dictionaries = Dictionary.query.filter_by(category_id=category_id).all()
+
+        if not dictionaries:
+            return None
+
+        dictionaries_list = []
+        for dictionary in dictionaries:
+            category = Category.query.get(dictionary.category_id)
+
+            dictionary_data = {
+                "id": dictionary.id,
+                "vietnamese": dictionary.vietnamese,
+                "english": dictionary.english,
+                "phoneticTranscription": dictionary.phonetic_transcription,
+                "explanation": dictionary.explanation,
+                "wordType": dictionary.word_type,
+                "thumbnail": dictionary.thumbnail,
+                "category": {
+                    "id": category.id,
+                    "nameCategory": category.name_category,
+                    "thumbnail": category.thumbnail,
+                    "description": category.describe
+                },
+                "englishExample": None,  # You may update this based on your data model
+                "vietnameseExample": None  # You may update this based on your data model
+            }
+            dictionaries_list.append(dictionary_data)
+
+        return dictionaries_list

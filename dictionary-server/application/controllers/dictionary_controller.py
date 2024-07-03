@@ -59,3 +59,22 @@ def get_total_dictionary_and_explanation_counts():
         "totalExplanationsCount": total_explanations_count
     }), 200
 
+
+@dictionary_bp.route('/<int:dictionary_id>', methods=['GET'])
+def search_dictionary_detail_by_id(dictionary_id):
+    dictionary_detail = dictionary_service.get_dictionary_detail_by_id(dictionary_id)
+
+    if not dictionary_detail:
+        return jsonify({'error': 'Dictionary not found'}), 404
+
+    return jsonify(dictionary_detail), 200
+
+
+@dictionary_bp.route('/search-by-category/<int:category_id>', methods=['GET'])
+def search_dictionary_by_category_id(category_id):
+    dictionaries = dictionary_service.get_dictionaries_by_category_id(category_id)
+
+    if not dictionaries:
+        return jsonify({'error': 'No dictionaries found for the category'}), 404
+
+    return jsonify(dictionaries), 200

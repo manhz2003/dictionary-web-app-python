@@ -15,6 +15,8 @@ const ExloreWord = () => {
   const [totalDictionary, setTotalDictionary] = useState(0);
   const [totalDescription, setTotalDescription] = useState(0);
 
+  console.log("categories", categories);
+
   const navigate = useNavigate();
 
   // Gọi API để lấy danh sách các danh mục
@@ -68,7 +70,7 @@ const ExloreWord = () => {
 
       <div className="w-full flex justify-center items-center mt-12 gap-8 flex-wrap">
         {categories.map((category) => {
-          const words = category.description.split(" ");
+          const words = (category?.description || "").split(" ");
           const displayDescription =
             words.length > 10
               ? `${words.slice(0, 10).join(" ")}...`
