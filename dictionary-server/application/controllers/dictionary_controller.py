@@ -13,14 +13,12 @@ def get_dictionaries_with_examples():
 
 @dictionary_bp.route('/dictionary', methods=['POST'])
 def create_dictionary():
-    data = request.json  # Lấy dữ liệu từ body của request
+    data = request.json
     if not data:
         return jsonify({'error': 'Invalid data, JSON body required'}), 400
-
-    # Thực hiện tạo mới từ điển
     new_dictionary = dictionary_service.create_dictionary(data)
     if new_dictionary:
-        return jsonify(new_dictionary), 201  # Trả về mã status 201 Created khi tạo mới thành công
+        return jsonify(new_dictionary), 201
     else:
         return jsonify({'error': 'Failed to create dictionary'}), 500
 
@@ -29,7 +27,7 @@ def create_dictionary():
 def update_dictionary():
     try:
         data = request.get_json()
-        updated_dictionary, error = dictionary_service.update_dictionary(data)  # Sử dụng dictionary_service thay vì service
+        updated_dictionary, error = dictionary_service.update_dictionary(data)
 
         if error:
             return jsonify({"message": "Failed to update dictionary", "error": error}), 400

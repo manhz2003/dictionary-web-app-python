@@ -1,9 +1,8 @@
-# application/services/dictionary_service.py
-
 from application.models.dictionary import Dictionary
 from application.models.example_dictionary import Example
 from application.models.category import Category
 from application import db
+
 
 class DictionaryService:
 
@@ -25,7 +24,7 @@ class DictionaryService:
                 "thumbnail": dictionary.thumbnail,
                 "category": {
                     "id": category.id,
-                    "nameCategory": category.name_category,  # Adjusted to name_category
+                    "nameCategory": category.name_category,
                     "thumbnail": category.thumbnail,
                     "description": category.describe
                 },
@@ -41,25 +40,23 @@ class DictionaryService:
             new_dictionaries = []
 
             for dictionary_data in data:
-                # Create a new dictionary object
                 new_dictionary = Dictionary(
                     vietnamese=dictionary_data['vietnamese'],
                     english=dictionary_data['english'],
                     phonetic_transcription=dictionary_data['phoneticTranscription'],
                     explanation=dictionary_data['explain'],
                     word_type=dictionary_data['wordType'],
-                    thumbnail=dictionary_data.get('thumbnail'),  # Handle optional field
+                    thumbnail=dictionary_data.get('thumbnail'),
                     category_id=dictionary_data['category']
                 )
 
-                # Add examples if provided
                 if 'englishExample' in dictionary_data and 'vietnameseExample' in dictionary_data:
                     for eng_example, vie_example in zip(dictionary_data['englishExample'],
                                                         dictionary_data['vietnameseExample']):
                         new_example = Example(
                             example=eng_example,
                             example_translation=vie_example,
-                            dictionary_id=new_dictionary.id  # Assign dictionary_id to the example
+                            dictionary_id=new_dictionary.id
                         )
                         new_dictionary.examples.append(new_example)
 
@@ -77,9 +74,7 @@ class DictionaryService:
     def update_dictionary(self, data):
         try:
             print("Updating dictionary with data:")
-            print(data)  # Log data để xem nó nhận được những gì từ request
-
-            # Lấy id từ phần tử đầu tiên trong danh sách data
+            print(data)
             dictionary_id = data[0]['id']
             dictionary_to_update = Dictionary.query.get(dictionary_id)
 
@@ -196,8 +191,8 @@ class DictionaryService:
                     "thumbnail": category.thumbnail,
                     "description": category.describe
                 },
-                "englishExample": None,  # You may update this based on your data model
-                "vietnameseExample": None  # You may update this based on your data model
+                "englishExample": None,
+                "vietnameseExample": None
             }
             dictionaries_list.append(dictionary_data)
 
@@ -228,8 +223,8 @@ class DictionaryService:
                     "thumbnail": category.thumbnail,
                     "description": category.describe
                 },
-                "englishExample": None,  # You may update this based on your data model
-                "vietnameseExample": None  # You may update this based on your data model
+                "englishExample": None,
+                "vietnameseExample": None
             }
             dictionaries_list.append(dictionary_data)
 

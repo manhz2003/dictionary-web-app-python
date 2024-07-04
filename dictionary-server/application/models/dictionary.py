@@ -1,7 +1,5 @@
-# application/models/dictionary.py
-
 from application import db
-from application.models.example_dictionary import Example  # Make sure to import Example model
+from application.models.example_dictionary import Example
 
 class Dictionary(db.Model):
     __tablename__ = 'dictionaries'

@@ -1,5 +1,3 @@
-# application/models/example.py
-
 from application import db
 
 class Example(db.Model):
