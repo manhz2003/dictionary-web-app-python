@@ -81,7 +81,7 @@ const WordList = () => {
                     {index + 1}:{" "}
                   </span>
                   <span className="text-[#2a61d4] text-[18px] leading-[28px]">
-                    <a href="#">{word.vietnamese}</a>
+                    <a href="#">{word.english}</a>
                   </span>
                 </div>
               ))}

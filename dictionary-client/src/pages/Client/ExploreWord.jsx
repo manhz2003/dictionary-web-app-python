@@ -59,6 +59,8 @@ const ExloreWord = () => {
     navigate(`/word-list?categoryId=${categoryId}`);
   };
 
+  // console.log("categories", categories);
+
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="w-full">
@@ -70,11 +72,11 @@ const ExloreWord = () => {
 
       <div className="w-full flex justify-center items-center mt-12 gap-8 flex-wrap">
         {categories.map((category) => {
-          const words = (category?.description || "").split(" ");
+          const words = (category?.describe || "").split(" ");
           const displayDescription =
             words.length > 10
               ? `${words.slice(0, 10).join(" ")}...`
-              : category.description;
+              : category.describe;
 
           return (
             <div

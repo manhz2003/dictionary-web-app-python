@@ -44,7 +44,6 @@ const VocabularyDetail = () => {
     }
     setFavourites(updatedFavourites);
     localStorage.setItem("favourites", JSON.stringify(updatedFavourites));
-    console.log("Favourites:", updatedFavourites);
   };
 
   if (!word) {
@@ -71,10 +70,13 @@ const VocabularyDetail = () => {
               </div>
             </div>
             <div className="text-[14px] text-[#a6a9ae] leading-[20px] font-semibold">
-              VIETNAMESE
+              ENGLISH
             </div>
             <div className="text-[28px] text-[#242938] leading-[40px] font-semibold">
-              {word.vietnamese}
+              {word.english}
+            </div>
+            <div className="text-[18px] leading-[28px] font-normal text-[#242938]">
+              {word.phoneticTranscription}
             </div>
           </div>
           <div className="rounded-[10px] w-[170px]">
@@ -86,20 +88,18 @@ const VocabularyDetail = () => {
           </div>
         </div>
         <div>
-          <div className="text-[14px] text-[#a6a9ae] leading-[20px] font-semibold">
-            ENGLISH
+          <div className="text-[14px] text-[#a6a9ae] leading-[20px] font-semibold mt-3">
+            VIETNAMESE
           </div>
           <div className="flex items-center gap-3">
             <div className="text-[28px] text-[#242938] leading-[40px] font-semibold">
-              {word.english}
+              {word.vietnamese}
             </div>
             <div className="font-semibold leading-[20px] text-[14px] text-[#2a61d4] flex justify-center items-center py-1 px-3 border-solid border-[1px] border-[#2a61d4] rounded-[14px]">
               {word.wordType}
             </div>
           </div>
-          <div className="text-[18px] leading-[28px] font-normal text-[#242938]">
-            {word.phoneticTranscription}
-          </div>
+
           <div className="text-[18px] leading-[28px] font-normal text-[#242938] mt-4">
             {word.explanation || "No explanation available"}
           </div>
@@ -116,11 +116,11 @@ const VocabularyDetail = () => {
           <div className="mt-5">
             {word.vietnameseExample.map((example, index) => (
               <div key={index} className="mt-5 ml-3">
-                <div className="font-medium text-[18px] text-[#242938] leading-[40px]">
-                  {index + 1}. {example}
+                <div className="font-medium text-[18px] text-[#242938] leading-[40px] ">
+                  {word.englishExample[index]}
                 </div>
                 <div className="text-[18px] text-[#41444b] leading-[40px] font-normal">
-                  {word.englishExample[index]}
+                  {index + 1}. {example}
                 </div>
               </div>
             ))}

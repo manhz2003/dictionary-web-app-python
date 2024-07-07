@@ -74,7 +74,7 @@ const SearchResult = () => {
                   </div>
                   <div className="items-center flex-col mb-10">
                     <div className="text-[18px] text-[#242938] font-semibold leading-[28px]">
-                      {result.vietnamese}
+                      {result.english}
                     </div>
                     <div className="font-normal leading-[20px] text-[14px] text-[#82858d]">
                       {truncateDescription(result.explanation)}

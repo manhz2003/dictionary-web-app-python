@@ -199,7 +199,7 @@ class DictionaryService:
         return dictionaries_list
 
     def search_dictionaries_vietnamese(self, keyword, page, size):
-        dictionaries = Dictionary.query.filter(Dictionary.vietnamese.like(f'%{keyword}%')).offset(page * size).limit(
+        dictionaries = Dictionary.query.filter(Dictionary.english.like(f'%{keyword}%')).offset(page * size).limit(
             size).all()
 
         if not dictionaries:
