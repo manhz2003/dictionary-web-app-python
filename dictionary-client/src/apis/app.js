@@ -2,7 +2,7 @@ import axios from "../axios";
 
 export const apiGetAllRole = () =>
     axios({
-        url: "/roles/all",
+        url: "/roles",
         method: "get",
 });
 

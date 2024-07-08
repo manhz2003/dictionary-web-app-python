@@ -138,7 +138,7 @@ const Header = () => {
                 )}
               </div>
               <div className="flex items-center gap-2 text-[#242938] select-none">
-                <div>{user && user.fullname}</div>
+                <div className="">{user && user.fullname}</div>
                 <IoMdArrowDropdown size="22px" color="#242938" />
               </div>
             </div>

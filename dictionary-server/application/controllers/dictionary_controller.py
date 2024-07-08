@@ -1,10 +1,13 @@
-from flask import Blueprint, jsonify, request  # Thêm request từ Flask
+from flask import Blueprint, jsonify, request
 from application.services.dictionary_service import DictionaryService
 
+# Blueprint để cấu trúc chia tác controller riêng ra và phải đăng ký nó để sử dụng controller đó
 dictionary_bp = Blueprint('dictionary_bp', __name__, url_prefix='/api/dictionaries')
 
 dictionary_service = DictionaryService()
 
+
+# trả về 1 tuple gồm (dictionary, status_code)
 @dictionary_bp.route('/', methods=['GET'])
 def get_dictionaries_with_examples():
     dictionaries = dictionary_service.get_dictionaries_with_examples()

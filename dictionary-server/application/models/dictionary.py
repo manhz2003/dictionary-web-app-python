@@ -1,6 +1,7 @@
 from application import db
 from application.models.example_dictionary import Example
 
+
 class Dictionary(db.Model):
     __tablename__ = 'dictionaries'
 

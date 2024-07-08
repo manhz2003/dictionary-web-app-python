@@ -3,6 +3,7 @@
 from application import db
 from application.models.role import Role
 
+
 class RoleService:
     @staticmethod
     def get_all_roles():

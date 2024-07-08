@@ -182,7 +182,7 @@ const DashBoard = () => {
       } else {
         await apiCreateUserById(userData)
           .then((response) => {
-            if (response.status === 200) {
+            if (response.status === 201) {
               toast.success("Thêm mới người dùng thành công");
             }
           })
@@ -304,7 +304,7 @@ const DashBoard = () => {
     ];
 
     dataSelect?.forEach((value, index) => {
-      let roles = value.role.join(", "); // Chuyển mảng role thành chuỗi
+      let roles = value.role?.join(", ");
       worksheet.addRow({
         no: index + 1,
         fullname: value.fullname,
